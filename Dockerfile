@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy requirements first (for caching)
-COPY requirements.txt .
+# Copy requirements from backend directory
+COPY backend/requirements.txt .
 
 # Install Python dependencies
 RUN pip install --upgrade pip && \
@@ -18,11 +18,11 @@ RUN pip install --upgrade pip && \
     pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+# Copy backend application code
+COPY backend/ .
 
 # Expose port
-EXPOSE $PORT
+EXPOSE 8000
 
 # Start command
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
